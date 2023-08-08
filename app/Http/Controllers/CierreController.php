@@ -13,10 +13,8 @@ class CierreController extends Controller
         $cierre = Cierre::create($request->all());
         $getId = Cierre::latest('id')->first();
         $id = $getId->id;
-        // $detalle = $request->listcuadre;
-        $detalle = new DetalleCierre();
-        var_dump($detalle->request->cierre_id);
-        $this->storeDetalle(22, $detalle);
+        $detalle = $request->listcuadre;
+        $this->storeDetalle($id, $detalle);
         return response()->json(['Mensaje'=>'Registro exitoso'],200);
     }
 
