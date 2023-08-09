@@ -36,7 +36,7 @@ class CierreController extends Controller
                 'monto_total' => $value['totalbs'],
                 'diferencia' => $value['diferenciabs'],
             ];
-            return DetalleCierre::create([$data]);
+            DetalleCierre::create($data);
         }       
     }
 }

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('caja');
             $table->string('supervisor');
             $table->string('cajero');
-            $table->double('tasa', 3, 2);
+            $table->double('tasa', 8, 2);
             $table->double('efectivo', 8, 2)->nullable();
             $table->double('punto', 8, 2)->nullable();
             $table->double('transferencia', 8, 2)->nullable();
