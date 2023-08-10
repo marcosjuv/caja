@@ -16,11 +16,12 @@ class CierreResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
+            'id' => $this->id,
+            'supervisor' => $this->supervisor,
             'fecha' => $this->fecha,
-            'hora' => $this->hora,
-            'supervisor' => $this->is_supervisor,
+            'monto' => $this->monto,
             // 'listcuadre' => $this->listcuadre,
-            'detalles' => DetalleCierreResource::collection($this->whenLoaded('detalleCierres')),
+            'detalles' => DetalleCierreResource::collection($this->listcuadre),
         ];
     }
 }

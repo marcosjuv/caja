@@ -51,5 +51,5 @@ Route::delete('deletecajas/{id}',[CajasController::class, 'eraseCajas']);
 
 /* ---------------------- cierre ------------------------------- */
 
-// Route::get('pruebacierre', fn () => new CierreCollection(Cierre::all()));
-Route::post('pruebacierre',[CierreController::class, 'storeCierre']);
+Route::get('getcierre', fn () => new CierreCollection(Cierre::all()));
+Route::post('insertcierre',[CierreController::class, 'storeCierre']);
