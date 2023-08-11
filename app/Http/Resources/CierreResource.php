@@ -19,6 +19,7 @@ class CierreResource extends JsonResource
             'id' => $this->id,
             'supervisor' => $this->supervisor,
             'fecha' => $this->fecha,
+            'hora' => $this->hora,
             'monto' => $this->monto,
             // 'listcuadre' => $this->listcuadre,
             // 'detalles' => DetalleCierreResource::collection($this->listcuadre),

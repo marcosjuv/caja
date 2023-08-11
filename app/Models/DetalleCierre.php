@@ -56,6 +56,8 @@ class DetalleCierre extends Model
 		'cierre_id',
 		'caja',
 		'supervisor',
+		'fecha',
+		'hora',
 		'cajero',
 		'tasa',
 		'efectivo',

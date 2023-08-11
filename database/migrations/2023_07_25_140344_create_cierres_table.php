@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('supervisor');
             $table->date('fecha');
+            $table->time('hora');
             $table->double('monto', 8, 2);
             $table->timestamps();
         });

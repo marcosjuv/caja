@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreign('cierre_id')->references('id')->on('cierres');
             $table->string('caja');
             $table->string('supervisor');
+            $table->date('fecha');
+            $table->time('hora', $precision = 0);
             $table->string('cajero');
             $table->double('tasa', 8, 2);
             $table->double('efectivo', 8, 2)->nullable();

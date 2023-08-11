@@ -29,7 +29,6 @@ class Cierre extends Model
 	protected $table = 'cierres';
 
 	protected $casts = [
-		'fecha' => 'datetime',
 		'monto' => 'float'
 	];
 
@@ -37,6 +36,7 @@ class Cierre extends Model
 		'id',
 		'supervisor',
 		'fecha',
+		'hora',
 		'monto'
 	];
 

@@ -24,6 +24,8 @@ class CierreController extends Controller
                 'cierre_id' => $id,
                 'caja' => $value['caja'],
                 'supervisor' => $value['supervisor'],
+                'fecha' => $value['fecha'],
+                'hora' => $value['hora'],
                 'cajero' => $value['cajero'],
                 'tasa' => $value['tasa'],
                 'efectivo' => $value['efectivo'],
@@ -33,8 +35,8 @@ class CierreController extends Controller
                 'cash' => $value['cash'],
                 'zelle' => $value['zelle'],
                 'premium' => $value['premium'],
-                'monto_total' => $value['totalbs'],
-                'diferencia' => $value['diferenciabs'],
+                'monto_total' => $value['monto_total'],
+                'diferencia' => $value['diferencia'],
             ];
             DetalleCierre::create($data);
         }       
