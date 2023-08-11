@@ -9,10 +9,13 @@ use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\CajasCollection;
 use App\Http\Resources\CierreCollection;
+use App\Http\Resources\CierreResource;
 use App\Http\Resources\CajasResource;
+use App\Http\Resources\DetalleCierreResource;
 use App\Models\Caja;
 use App\Models\User;
 use App\Models\Cierre;
+use App\Models\DetalleCierre;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,5 +54,7 @@ Route::delete('deletecajas/{id}',[CajasController::class, 'eraseCajas']);
 
 /* ---------------------- cierre ------------------------------- */
 
-Route::get('getcierre', fn () => new CierreCollection(Cierre::all()));
+Route::get('getcierre', fn () => CierreResource::collection(Cierre::all()));
+Route::get('getdetalle', fn () => DetalleCierreResource::collection(DetalleCierre::all()));
 Route::post('insertcierre',[CierreController::class, 'storeCierre']);
+Route::get('getid/{id}',[CierreController::class, 'getFullCierre']);

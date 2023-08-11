@@ -39,4 +39,13 @@ class CierreController extends Controller
             DetalleCierre::create($data);
         }       
     }
+
+    public function getFullCierre(Request $request, $id)
+    {
+        $detalle_cierre = DetalleCierre::where('cierre_id', $id)->get();
+        // foreach ($detalle_cierre as $value) {
+        //     return $value;
+        // }
+            return $detalle_cierre;
+    }
 }

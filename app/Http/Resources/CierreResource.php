@@ -21,7 +21,7 @@ class CierreResource extends JsonResource
             'fecha' => $this->fecha,
             'monto' => $this->monto,
             // 'listcuadre' => $this->listcuadre,
-            'detalles' => DetalleCierreResource::collection($this->listcuadre),
+            // 'detalles' => DetalleCierreResource::collection($this->listcuadre),
         ];
     }
 }
