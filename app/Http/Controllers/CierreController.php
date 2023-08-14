@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cierre;
 use App\Models\DetalleCierre;
+use Codedge\Fpdf\Fpdf\Fpdf;
 use Response;
 
 class CierreController extends Controller
 {
+    private $fpdf;
+
     function storeCierre(Request $request){
         $cierre = Cierre::create($request->all());
         $getId = Cierre::latest('id')->first();
@@ -42,12 +45,21 @@ class CierreController extends Controller
         }       
     }
 
-    public function getFullCierre(Request $request, $id)
+    public function getFullCierre(Request $request)
     {
-        $detalle_cierre = DetalleCierre::where('cierre_id', $id)->get();
-        // foreach ($detalle_cierre as $value) {
-        //     return $value;
-        // }
-            return $detalle_cierre;
-    }
+        $path = 'C:/Users/Marcos Javier/Documents/pruebas pdf/cierre.pdf';        
+        $data = Cierre::join('detalle_cierres','detalle_cierres.cierre_id','=','cierres.id')
+                ->select('*')
+                ->get();
+
+                // $res = json_decode($data);
+
+                $this->fpdf = new Fpdf;
+                $this->fpdf->AddPage();
+                $this->fpdf->SetFont('Courier', 'B', 18);
+                $this->fpdf->Cell(50, 25, $data);
+                return $this->fpdf->Output('F', $path);
+                // return response($data);
+                // exit;
+    }   
 }
