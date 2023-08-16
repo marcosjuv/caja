@@ -45,48 +45,84 @@ class CierreController extends Controller
         }       
     }
 
-    public function getFullCierre(Request $request)
+    public function getFullCierre(Request $request, $id)
     {
         $path = 'C:/Users/Marcos Javier/Documents/pruebas pdf/cierre.pdf';        
         $data = Cierre::join('detalle_cierres','detalle_cierres.cierre_id','=','cierres.id')
-                ->select('*')
-                ->get();
-                $this->fpdf = new Fpdf;
+                ->where('cierre_id', $id)
+                ->get(['cierres.*',
+                 'detalle_cierres.cajero',
+                 'detalle_cierres.tasa',
+                 'detalle_cierres.efectivo',
+                 'detalle_cierres.punto',
+                 'detalle_cierres.transferencia',
+                 'detalle_cierres.pendiente',
+                 'detalle_cierres.cash',
+                 'detalle_cierres.zelle',
+                 'detalle_cierres.premium',
+                 'detalle_cierres.monto_total',
+                 'detalle_cierres.diferencia']);
+                $datos = json_decode($data);
+                $this->fpdf = new PDF;
                 $this->fpdf->AddPage('L');
-                $this->fpdf->SetFont('Courier', 'B', 18);
-                foreach ($data as $value) {
-                    $this->fpdf->MultiCell(50, 25, $value->supervisor);
+                $this->fpdf->SetFont('Courier', 'B', 12);
+                $this->fpdf->Cell(40, 8, $datos[0]->supervisor, 1);
+                $this->fpdf->Cell(40, 8, $datos[0]->fecha, 1);
+                $this->fpdf->Cell(25, 8, $datos[0]->hora, 1);
+                $this->fpdf->Cell(10, 8, $datos[0]->monto, 1);
+                $this->fpdf->ln(10);
+                $this->fpdf->Cell(40, 8, 'Cajero', 1);
+                $this->fpdf->Cell(20, 8, 'Tasa', 1);
+                $this->fpdf->Cell(25, 8, 'Hora', 1);
+                $this->fpdf->Cell(20, 8, 'Efectivo', 1);
+                $this->fpdf->Cell(20, 8, 'Punto', 1);
+                $this->fpdf->Cell(20, 8, 'Transferencia', 1);
+                $this->fpdf->Cell(20, 8, 'Pendiente', 1);
+                $this->fpdf->Cell(20, 8, 'Dolares', 1);
+                $this->fpdf->Cell(20, 8, 'Zelle', 1);
+                $this->fpdf->Cell(20, 8, 'Premium', 1);
+                $this->fpdf->Cell(20, 8, 'Total caja', 1);
+                $this->fpdf->Cell(20, 8, 'Diferencia', 1);
+                $this->fpdf->ln();
+                foreach ($datos as $value) {
+                $this->fpdf->Cell(40, 8, $value->cajero, 1);
+                $this->fpdf->Cell(20, 8, $value->tasa, 1);
+                $this->fpdf->Cell(25, 8, $value->hora, 1);
+                $this->fpdf->Cell(20, 8, $value->efectivo, 1);
+                $this->fpdf->Cell(20, 8, $value->punto, 1);
+                $this->fpdf->Cell(20, 8, $value->transferencia, 1);
+                $this->fpdf->Cell(20, 8, $value->pendiente, 1);
+                $this->fpdf->Cell(20, 8, $value->cash, 1);
+                $this->fpdf->Cell(20, 8, $value->zelle, 1);
+                $this->fpdf->Cell(20, 8, $value->premium, 1);
+                $this->fpdf->Cell(20, 8, $value->monto_total, 1);
+                $this->fpdf->Cell(20, 8, $value->diferencia, 1);
+                $this->fpdf->ln();
                 }
-                return $this->fpdf->Output('F', $path);
-                // return response($data);
-                // exit;
-    }
-
-    // public function Header(){
-    //     $this->fpdf = new Fpdf;
-    //     // Select Arial bold 15
-    //     $this->fpdf->SetFont('Arial', 'B', 15);
-    //     // Move to the right
-    //     $this->fpdf->Cell(80);
-    //     // Framed title
-    //     $this->fpdf->Cell(30, 10, 'Title', 1, 0, 'C');
-    //     // Line break
-    //     $this->fpdf->Ln(20);
-    // }
- 
+                $this->fpdf->Output('D', 'cierre.pdf');
+                // // return response()->json($data);
+    } 
 }
 
 class PDF extends FPDF
 {
-    function Header()
-    {
+    function Header(){
         // Select Arial bold 15
         $this->SetFont('Arial', 'B', 15);
         // Move to the right
-        $this->Cell(80);
+        $this->Cell(40);
         // Framed title
-        $this->Cell(30, 10, 'Title', 1, 0, 'C');
+        $this->Cell(300, 10, 'Title', 1, 0, 'C');
         // Line break
         $this->Ln(20);
+    }
+
+    function Footer(){
+        // Posición: a 1,5 cm del final
+        $this->SetY(-15);
+        // Arial italic 8
+        $this->SetFont('Arial','I',8);
+        // Número de página
+        $this->Cell(0,10,'Page '.$this->PageNo().'/1',0,0,'C');
     }
 }

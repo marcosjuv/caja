@@ -58,5 +58,5 @@ Route::delete('deletecajas/{id}',[CajasController::class, 'eraseCajas']);
 Route::get('getcierre', fn () => CierreResource::collection(Cierre::all()));
 Route::get('getdetalle', fn () => DetalleCierreResource::collection(DetalleCierre::all()));
 Route::post('insertcierre',[CierreController::class, 'storeCierre']);
-Route::get('getallcierre',[CierreController::class, 'getFullCierre']);
+Route::get('getallcierre/{id}',[CierreController::class, 'getFullCierre']);
 Route::get('getdetalles/{id}',[DetalleCierreController::class, 'getDetails']);
