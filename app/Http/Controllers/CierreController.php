@@ -47,7 +47,8 @@ class CierreController extends Controller
 
     public function getFullCierre(Request $request, $id)
     {
-        $path = 'C:/Users/Marcos Javier/Documents/pruebas pdf/cierre.pdf';        
+        $path = 'C:/Users/Marcos Javier/Documents/pruebas pdf/cierre.pdf';
+        $img = 'http://localhost/caja/public/image/logo_reporte.jpg' ;       
         $data = Cierre::join('detalle_cierres','detalle_cierres.cierre_id','=','cierres.id')
                 ->where('cierre_id', $id)
                 ->get(['cierres.*',
@@ -63,45 +64,201 @@ class CierreController extends Controller
                  'detalle_cierres.monto_total',
                  'detalle_cierres.diferencia']);
                 $datos = json_decode($data);
-                $this->fpdf = new PDF;
+                $this->fpdf = new PDF_MC_Table;
+                $this->fpdf->SetFillColor(248, 249, 249);
                 $this->fpdf->AddPage('L');
-                $this->fpdf->SetFont('Courier', 'B', 12);
-                $this->fpdf->Cell(40, 8, $datos[0]->supervisor, 1);
-                $this->fpdf->Cell(40, 8, $datos[0]->fecha, 1);
-                $this->fpdf->Cell(25, 8, $datos[0]->hora, 1);
-                $this->fpdf->Cell(10, 8, $datos[0]->monto, 1);
+                $this->fpdf->SetAutoPageBreak(true, 20);
+                $this->fpdf->SetMargins(10,15,10);
+                $this->fpdf->SetFont('Courier','B', 14);
+                $this->fpdf->Image($img,1, 1, 50, 50);
+                $this->fpdf->ln(20);
+                $this->fpdf->Cell(45, 8, 'Supervisor(a):',0,0,'L');
+                $this->fpdf->Cell(100, 8, $datos[0]->supervisor,0,0,'L');
+                $this->fpdf->Cell(30, 8, 'Fecha:',0,0,'R');
+                $this->fpdf->Cell(45, 8, $datos[0]->fecha,0,0,'L');
+                $this->fpdf->Cell(25, 8, 'Hora:',0,0,'R');
+                $this->fpdf->Cell(30, 8, $datos[0]->hora,0,0,'L');                
+                $this->fpdf->ln();
+                $this->fpdf->Cell(70, 8, 'Monto total del cierre:',0,0,'L');
+                $this->fpdf->Cell(30, 8, 'Bs. '.$datos[0]->monto,0,0,'L');
                 $this->fpdf->ln(10);
-                $this->fpdf->Cell(40, 8, 'Cajero', 1);
-                $this->fpdf->Cell(20, 8, 'Tasa', 1);
+                $this->fpdf->SetFont('Courier', 'B', 12);
+                $this->fpdf->Cell(35, 8, 'Cajero', 1);
+                $this->fpdf->Cell(15, 8, 'Tasa', 1);
                 $this->fpdf->Cell(25, 8, 'Hora', 1);
-                $this->fpdf->Cell(20, 8, 'Efectivo', 1);
-                $this->fpdf->Cell(20, 8, 'Punto', 1);
-                $this->fpdf->Cell(20, 8, 'Transferencia', 1);
-                $this->fpdf->Cell(20, 8, 'Pendiente', 1);
+                $this->fpdf->Cell(23, 8, 'Efectivo', 1);
+                $this->fpdf->Cell(15, 8, 'Punto', 1);
+                $this->fpdf->Cell(20, 8, 'Transf', 1);
+                $this->fpdf->Cell(25, 8, 'Pendiente', 1);
                 $this->fpdf->Cell(20, 8, 'Dolares', 1);
-                $this->fpdf->Cell(20, 8, 'Zelle', 1);
+                $this->fpdf->Cell(15, 8, 'Zelle', 1);
                 $this->fpdf->Cell(20, 8, 'Premium', 1);
-                $this->fpdf->Cell(20, 8, 'Total caja', 1);
-                $this->fpdf->Cell(20, 8, 'Diferencia', 1);
+                $this->fpdf->Cell(30, 8, 'Total. C', 1);
+                $this->fpdf->Cell(25, 8, 'Dif', 1);
                 $this->fpdf->ln();
+                $this->fpdf->SetFont('Courier','', 12);
+                $this->fpdf->SetWidths(array(35, 15, 25, 23, 15, 20, 25, 20, 15, 20, 30, 25));
                 foreach ($datos as $value) {
-                $this->fpdf->Cell(40, 8, $value->cajero, 1);
-                $this->fpdf->Cell(20, 8, $value->tasa, 1);
-                $this->fpdf->Cell(25, 8, $value->hora, 1);
-                $this->fpdf->Cell(20, 8, $value->efectivo, 1);
-                $this->fpdf->Cell(20, 8, $value->punto, 1);
-                $this->fpdf->Cell(20, 8, $value->transferencia, 1);
-                $this->fpdf->Cell(20, 8, $value->pendiente, 1);
-                $this->fpdf->Cell(20, 8, $value->cash, 1);
-                $this->fpdf->Cell(20, 8, $value->zelle, 1);
-                $this->fpdf->Cell(20, 8, $value->premium, 1);
-                $this->fpdf->Cell(20, 8, $value->monto_total, 1);
-                $this->fpdf->Cell(20, 8, $value->diferencia, 1);
-                $this->fpdf->ln();
+                    $this->fpdf->Row(array(
+                        $value->cajero, 
+                        $value->tasa, 
+                        $value->hora, 
+                        $value->efectivo, 
+                        $value->punto, 
+                        $value->transferencia, 
+                        $value->pendiente, 
+                        $value->cash, 
+                        $value->zelle, 
+                        $value->premium, 
+                        $value->monto_total, 
+                        $value->diferencia));
+                
                 }
-                $this->fpdf->Output('D', 'cierre.pdf');
+                // $this->fpdf->AddPage('L');
+                
+                $this->fpdf->Output('F', $path);
                 // // return response()->json($data);
     } 
+}
+
+class PDF_MC_Table extends FPDF
+{
+    protected $widths;
+    protected $aligns;
+
+    function SetWidths($w)
+    {
+        // Set the array of column widths
+        $this->widths = $w;
+    }
+
+    function SetAligns($a)
+    {
+        // Set the array of column alignments
+        $this->aligns = $a;
+    }
+
+    function Row($data)
+    {
+        // Calculate the height of the row
+        $nb = 0;
+        for($i=0;$i<count($data);$i++)
+            $nb = max($nb,$this->NbLines($this->widths[$i],$data[$i]));
+        $h = 5*$nb;
+        // Issue a page break first if needed
+        $this->CheckPageBreak($h);
+        // Draw the cells of the row
+        for($i=0;$i<count($data);$i++)
+        {
+            $w = $this->widths[$i];
+            $a = isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
+            // Save the current position
+            $x = $this->GetX();
+            $y = $this->GetY();
+            // Draw the border
+            $this->Rect($x,$y,$w,$h);
+            // Print the text
+            $this->MultiCell($w,5,$data[$i],0,$a);
+            // $this->MultiCell($w,5,$data[$i],'B','T',$a);
+            // Put the position to the right of the cell
+            $this->SetXY($x+$w,$y);
+        }
+        // Go to the next line
+        $this->Ln($h);
+    }
+
+    function CheckPageBreak($h)
+    {
+        // If the height h would cause an overflow, add a new page immediately
+        if($this->GetY()+$h>$this->PageBreakTrigger)
+            $this->AddPage($this->CurOrientation);
+
+            // $this->Cell(35, 8, 'Cajero', 1);
+            // $this->Cell(15, 8, 'Tasa', 1);
+            // $this->Cell(25, 8, 'Hora', 1);
+            // $this->Cell(23, 8, 'Efectivo', 1);
+            // $this->Cell(15, 8, 'Punto', 1);
+            // $this->Cell(20, 8, 'Transf', 1);
+            // $this->Cell(25, 8, 'Pendiente', 1);
+            // $this->Cell(20, 8, 'Dolares', 1);
+            // $this->Cell(15, 8, 'Zelle', 1);
+            // $this->Cell(20, 8, 'Premium', 1);
+            // $this->Cell(30, 8, 'Total. C', 1);
+            // $this->Cell(25, 8, 'Dif', 1);
+    }
+
+    function Header(){
+        // Select Arial bold 15
+        $this->SetFont('Arial', 'B', 30);
+        // Move to the right
+        $this->Cell(5);
+        // Framed title
+        $this->Cell(270, 20, 'Resumen de Cierre de caja', 0, 0, 'C');
+        // Line break
+        $this->Ln(20);
+    }
+
+    function Footer(){
+        // Posición: a 1,5 cm del final
+        $this->SetY(-15);
+        // Arial italic 8
+        $this->SetFont('Arial','I',8);
+        // Número de página
+        $this->Cell(0,10,'Page '.$this->PageNo().'/1',0,0,'C');
+    }
+
+    function NbLines($w, $txt)
+    {
+        // Compute the number of lines a MultiCell of width w will take
+        if(!isset($this->CurrentFont))
+            $this->Error('No font has been set');
+        $cw = $this->CurrentFont['cw'];
+        if($w==0)
+            $w = $this->w-$this->rMargin-$this->x;
+        $wmax = ($w-2*$this->cMargin)*1000/$this->FontSize;
+        $s = str_replace("\r",'',(string)$txt);
+        $nb = strlen($s);
+        if($nb>0 && $s[$nb-1]=="\n")
+            $nb--;
+        $sep = -1;
+        $i = 0;
+        $j = 0;
+        $l = 0;
+        $nl = 1;
+        while($i<$nb)
+        {
+            $c = $s[$i];
+            if($c=="\n")
+            {
+                $i++;
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+                continue;
+            }
+            if($c==' ')
+                $sep = $i;
+            $l += $cw[$c];
+            if($l>$wmax)
+            {
+                if($sep==-1)
+                {
+                    if($i==$j)
+                        $i++;
+                }
+                else
+                    $i = $sep+1;
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+            }
+            else
+                $i++;
+        }
+        return $nl;
+    }
 }
 
 class PDF extends FPDF
@@ -110,9 +267,9 @@ class PDF extends FPDF
         // Select Arial bold 15
         $this->SetFont('Arial', 'B', 15);
         // Move to the right
-        $this->Cell(40);
+        // $this->Cell(0);
         // Framed title
-        $this->Cell(300, 10, 'Title', 1, 0, 'C');
+        $this->Cell(270, 10, 'Title', 1, 0, 'C');
         // Line break
         $this->Ln(20);
     }
