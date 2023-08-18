@@ -47,8 +47,8 @@ class CierreController extends Controller
 
     public function getFullCierre(Request $request, $id)
     {
-        $path = 'C:/Users/Marcos Javier/Documents/pruebas pdf/cierre.pdf';
-        $img = 'http://localhost/caja/public/image/logo_reporte.jpg' ;       
+        // $path = dirname(__FILE__);
+        $path = 'C:/Users/Marcos Javier/Documents/pruebas pdf/cierre.pdf';    
         $data = Cierre::join('detalle_cierres','detalle_cierres.cierre_id','=','cierres.id')
                 ->where('cierre_id', $id)
                 ->get(['cierres.*',
@@ -63,31 +63,34 @@ class CierreController extends Controller
                  'detalle_cierres.premium',
                  'detalle_cierres.monto_total',
                  'detalle_cierres.diferencia']);
+                // dd($path);
                 $datos = json_decode($data);
+                $dolares = number_format($datos[0]->monto/$datos[0]->tasa, 2, '.', ',');
                 $this->fpdf = new PDF_MC_Table;
+                $this->fpdf->AliasNbPages();
                 $this->fpdf->SetFillColor(248, 249, 249);
                 $this->fpdf->AddPage('L');
                 $this->fpdf->SetAutoPageBreak(true, 20);
                 $this->fpdf->SetMargins(10,15,10);
                 $this->fpdf->SetFont('Courier','B', 14);
-                $this->fpdf->Image($img,1, 1, 50, 50);
                 $this->fpdf->ln(20);
                 $this->fpdf->Cell(45, 8, 'Supervisor(a):',0,0,'L');
                 $this->fpdf->Cell(100, 8, $datos[0]->supervisor,0,0,'L');
                 $this->fpdf->Cell(30, 8, 'Fecha:',0,0,'R');
-                $this->fpdf->Cell(45, 8, $datos[0]->fecha,0,0,'L');
+                $this->fpdf->Cell(45, 8, date('d-m-Y', strtotime($datos[0]->fecha)),0,0,'L');
                 $this->fpdf->Cell(25, 8, 'Hora:',0,0,'R');
-                $this->fpdf->Cell(30, 8, $datos[0]->hora,0,0,'L');                
+                $this->fpdf->Cell(30, 8, date('h:i A', strtotime($datos[0]->hora)),0,0,'L');                
                 $this->fpdf->ln();
-                $this->fpdf->Cell(70, 8, 'Monto total del cierre:',0,0,'L');
-                $this->fpdf->Cell(30, 8, 'Bs. '.$datos[0]->monto,0,0,'L');
+                $this->fpdf->Cell(70, 8, 'Monto total del cierre: ',0,0,'L');
+                $this->fpdf->Cell(25, 8, 'Bs.'.$datos[0]->monto.' /',0,0,'C');
+                $this->fpdf->Cell(30, 8, '$.'.$dolares,0,0,'L');
                 $this->fpdf->ln(10);
                 $this->fpdf->SetFont('Courier', 'B', 12);
                 $this->fpdf->Cell(35, 8, 'Cajero', 1);
-                $this->fpdf->Cell(15, 8, 'Tasa', 1);
+                $this->fpdf->Cell(20, 8, 'Tasa', 1);
                 $this->fpdf->Cell(25, 8, 'Hora', 1);
                 $this->fpdf->Cell(23, 8, 'Efectivo', 1);
-                $this->fpdf->Cell(15, 8, 'Punto', 1);
+                $this->fpdf->Cell(20, 8, 'Punto', 1);
                 $this->fpdf->Cell(20, 8, 'Transf', 1);
                 $this->fpdf->Cell(25, 8, 'Pendiente', 1);
                 $this->fpdf->Cell(20, 8, 'Dolares', 1);
@@ -97,12 +100,12 @@ class CierreController extends Controller
                 $this->fpdf->Cell(25, 8, 'Dif', 1);
                 $this->fpdf->ln();
                 $this->fpdf->SetFont('Courier','', 12);
-                $this->fpdf->SetWidths(array(35, 15, 25, 23, 15, 20, 25, 20, 15, 20, 30, 25));
+                $this->fpdf->SetWidths(array(35, 20, 25, 23, 20, 20, 25, 20, 15, 20, 30, 25));
                 foreach ($datos as $value) {
                     $this->fpdf->Row(array(
                         $value->cajero, 
                         $value->tasa, 
-                        $value->hora, 
+                        date('h:i A', strtotime($value->hora)), 
                         $value->efectivo, 
                         $value->punto, 
                         $value->transferencia, 
@@ -114,10 +117,7 @@ class CierreController extends Controller
                         $value->diferencia));
                 
                 }
-                // $this->fpdf->AddPage('L');
-                
                 $this->fpdf->Output('F', $path);
-                // // return response()->json($data);
     } 
 }
 
@@ -172,39 +172,28 @@ class PDF_MC_Table extends FPDF
         // If the height h would cause an overflow, add a new page immediately
         if($this->GetY()+$h>$this->PageBreakTrigger)
             $this->AddPage($this->CurOrientation);
-
-            // $this->Cell(35, 8, 'Cajero', 1);
-            // $this->Cell(15, 8, 'Tasa', 1);
-            // $this->Cell(25, 8, 'Hora', 1);
-            // $this->Cell(23, 8, 'Efectivo', 1);
-            // $this->Cell(15, 8, 'Punto', 1);
-            // $this->Cell(20, 8, 'Transf', 1);
-            // $this->Cell(25, 8, 'Pendiente', 1);
-            // $this->Cell(20, 8, 'Dolares', 1);
-            // $this->Cell(15, 8, 'Zelle', 1);
-            // $this->Cell(20, 8, 'Premium', 1);
-            // $this->Cell(30, 8, 'Total. C', 1);
-            // $this->Cell(25, 8, 'Dif', 1);
     }
 
     function Header(){
         // Select Arial bold 15
         $this->SetFont('Arial', 'B', 30);
+        $img = 'http://localhost/caja/public/image/logo_reporte.jpg' ;
+        $this->Image($img,1, 1, 50, 50);
         // Move to the right
         $this->Cell(5);
         // Framed title
-        $this->Cell(270, 20, 'Resumen de Cierre de caja', 0, 0, 'C');
+        $this->Cell(270, 20, 'Resumen de Cierre', 0, 0, 'C');
         // Line break
         $this->Ln(20);
     }
 
-    function Footer(){
+    function Footer(){        
         // Posición: a 1,5 cm del final
         $this->SetY(-15);
         // Arial italic 8
         $this->SetFont('Arial','I',8);
         // Número de página
-        $this->Cell(0,10,'Page '.$this->PageNo().'/1',0,0,'C');
+        $this->Cell(0,10,'Pagina '.$this->PageNo().'/1',0,0,'C');
     }
 
     function NbLines($w, $txt)
@@ -280,6 +269,6 @@ class PDF extends FPDF
         // Arial italic 8
         $this->SetFont('Arial','I',8);
         // Número de página
-        $this->Cell(0,10,'Page '.$this->PageNo().'/1',0,0,'C');
+        $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
     }
 }
