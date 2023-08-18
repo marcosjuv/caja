@@ -118,6 +118,8 @@ class CierreController extends Controller
                 
                 }
                 $this->fpdf->Output('F', $path);
+                // $this->fpdf->Output('D', 'cierre.pdf');
+                 // return response()->json([$value]);
     } 
 }
 
