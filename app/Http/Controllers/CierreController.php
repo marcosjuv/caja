@@ -68,7 +68,6 @@ class CierreController extends Controller
                 $dolares = number_format($datos[0]->monto/$datos[0]->tasa, 2, '.', ',');
                 $this->fpdf = new PDF_MC_Table;
                 $this->fpdf->AliasNbPages();
-                $this->fpdf->SetFillColor(248, 249, 249);
                 $this->fpdf->AddPage('L');
                 $this->fpdf->SetAutoPageBreak(true, 20);
                 $this->fpdf->SetMargins(10,15,10);
@@ -85,25 +84,26 @@ class CierreController extends Controller
                 $this->fpdf->Cell(25, 8, 'Bs.'.$datos[0]->monto.' /',0,0,'C');
                 $this->fpdf->Cell(30, 8, '$.'.$dolares,0,0,'L');
                 $this->fpdf->ln(10);
+                $this->fpdf->SetFillColor(150, 150, 150);
                 $this->fpdf->SetFont('Courier', 'B', 12);
-                $this->fpdf->Cell(35, 8, 'Cajero', 1);
-                $this->fpdf->Cell(20, 8, 'Tasa', 1);
-                $this->fpdf->Cell(25, 8, 'Hora', 1);
-                $this->fpdf->Cell(23, 8, 'Efectivo', 1);
-                $this->fpdf->Cell(20, 8, 'Punto', 1);
-                $this->fpdf->Cell(20, 8, 'Transf', 1);
-                $this->fpdf->Cell(25, 8, 'Pendiente', 1);
-                $this->fpdf->Cell(20, 8, 'Dolares', 1);
-                $this->fpdf->Cell(15, 8, 'Zelle', 1);
-                $this->fpdf->Cell(20, 8, 'Premium', 1);
-                $this->fpdf->Cell(30, 8, 'Total. C', 1);
-                $this->fpdf->Cell(25, 8, 'Dif', 1);
+                $this->fpdf->Cell(35, 8, 'Cajero', 1,0,'',true);
+                $this->fpdf->Cell(20, 8, 'Tasa', 1,0,'',true);
+                $this->fpdf->Cell(25, 8, 'Hora', 1,0,'',true);
+                $this->fpdf->Cell(23, 8, 'Efectivo', 1,0,'',true);
+                $this->fpdf->Cell(20, 8, 'Punto', 1,0,'',true);
+                $this->fpdf->Cell(20, 8, 'Transf', 1,0,'',true);
+                $this->fpdf->Cell(25, 8, 'Pendiente', 1,0,'',true);
+                $this->fpdf->Cell(20, 8, 'Dolares', 1,0,'',true);
+                $this->fpdf->Cell(15, 8, 'Zelle', 1,0,'',true);
+                $this->fpdf->Cell(20, 8, 'Premium', 1,0,'',true);
+                $this->fpdf->Cell(30, 8, 'Total. C', 1,0,'',true);
+                $this->fpdf->Cell(25, 8, 'Dif', 1,0,'',true);
                 $this->fpdf->ln();
                 $this->fpdf->SetFont('Courier','', 12);
                 $this->fpdf->SetWidths(array(35, 20, 25, 23, 20, 20, 25, 20, 15, 20, 30, 25));
                 foreach ($datos as $value) {
                     $this->fpdf->Row(array(
-                        $value->cajero, 
+                        $value->cajero,
                         $value->tasa, 
                         date('h:i A', strtotime($value->hora)), 
                         $value->efectivo, 
@@ -176,7 +176,7 @@ class PDF_MC_Table extends FPDF
             $this->AddPage($this->CurOrientation);
     }
 
-    function Header(){
+    function Header(){       
         // Select Arial bold 15
         $this->SetFont('Arial', 'B', 30);
         $img = 'http://localhost/caja/public/image/logo_reporte.jpg' ;
@@ -187,6 +187,21 @@ class PDF_MC_Table extends FPDF
         $this->Cell(270, 20, 'Resumen de Cierre', 0, 0, 'C');
         // Line break
         $this->Ln(20);
+
+        /*$this->SetFont('Courier', 'B', 12);
+
+        $this->Cell(35, 8, 'Cajero', 1);
+        $this->Cell(20, 8, 'Tasa', 1);
+        $this->Cell(25, 8, 'Hora', 1);
+        $this->Cell(23, 8, 'Efectivo', 1);
+        $this->Cell(20, 8, 'Punto', 1);
+        $this->Cell(20, 8, 'Transf', 1);
+        $this->Cell(25, 8, 'Pendiente', 1);
+        $this->Cell(20, 8, 'Dolares', 1);
+        $this->Cell(15, 8, 'Zelle', 1);
+        $this->Cell(20, 8, 'Premium', 1);
+        $this->Cell(30, 8, 'Total. C', 1);
+        $this->Cell(25, 8, 'Dif', 1);*/
     }
 
     function Footer(){        
@@ -195,7 +210,8 @@ class PDF_MC_Table extends FPDF
         // Arial italic 8
         $this->SetFont('Arial','I',8);
         // Número de página
-        $this->Cell(0,10,'Pagina '.$this->PageNo().'/1',0,0,'C');
+        $this->Cell(0,10,'Pagina '.$this->PageNo().'/{nb}',0,0,'C');
+        $this->Cell(-40,10,'Fecha '.date('d-m-Y h:i A',strtotime(Now())),0,0,'C');
     }
 
     function NbLines($w, $txt)
