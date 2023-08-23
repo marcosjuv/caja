@@ -18,7 +18,8 @@ class CierreController extends Controller
         $id = $getId->id;
         $detalle = $request->listcuadre;
         $this->storeDetalle($id, $detalle);
-        return response()->json(['Mensaje'=>'Registro exitoso'],200);
+        // return response()->json(['Mensaje'=>'Registro exitoso'],200);
+        return response()->json($cierre,200);
     }
 
     function storeDetalle($id, $detalle) {
@@ -42,6 +43,7 @@ class CierreController extends Controller
                 'diferencia' => $value['diferencia'],
             ];
             DetalleCierre::create($data);
+            return response()->json($data,200);
         }       
     }
 
@@ -87,20 +89,20 @@ class CierreController extends Controller
                 $this->fpdf->SetFillColor(150, 150, 150);
                 $this->fpdf->SetFont('Courier', 'B', 12);
                 $this->fpdf->Cell(35, 8, 'Cajero', 1,0,'',true);
-                $this->fpdf->Cell(20, 8, 'Tasa', 1,0,'',true);
+                $this->fpdf->Cell(15, 8, 'Tasa', 1,0,'',true);
                 $this->fpdf->Cell(25, 8, 'Hora', 1,0,'',true);
                 $this->fpdf->Cell(23, 8, 'Efectivo', 1,0,'',true);
                 $this->fpdf->Cell(20, 8, 'Punto', 1,0,'',true);
                 $this->fpdf->Cell(20, 8, 'Transf', 1,0,'',true);
                 $this->fpdf->Cell(25, 8, 'Pendiente', 1,0,'',true);
                 $this->fpdf->Cell(20, 8, 'Dolares', 1,0,'',true);
-                $this->fpdf->Cell(15, 8, 'Zelle', 1,0,'',true);
+                $this->fpdf->Cell(20, 8, 'Zelle', 1,0,'',true);
                 $this->fpdf->Cell(20, 8, 'Premium', 1,0,'',true);
-                $this->fpdf->Cell(30, 8, 'Total. C', 1,0,'',true);
+                $this->fpdf->Cell(25, 8, 'Total. C', 1,0,'',true);
                 $this->fpdf->Cell(25, 8, 'Dif', 1,0,'',true);
                 $this->fpdf->ln();
                 $this->fpdf->SetFont('Courier','', 12);
-                $this->fpdf->SetWidths(array(35, 20, 25, 23, 20, 20, 25, 20, 15, 20, 30, 25));
+                $this->fpdf->SetWidths(array(35, 15, 25, 23, 20, 20, 25, 20, 20, 20, 25, 25));
                 foreach ($datos as $value) {
                     $this->fpdf->Row(array(
                         $value->cajero,
