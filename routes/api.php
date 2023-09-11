@@ -34,7 +34,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('getusers', function () {
-    return new UserCollection(User::all());
+    return new UserCollection(User::paginate());
 });
 
 Route::get('getid/{id}',[UserController::class, 'getUserById']);

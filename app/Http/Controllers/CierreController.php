@@ -18,8 +18,8 @@ class CierreController extends Controller
         $id = $getId->id;
         $detalle = $request->listcuadre;
         $this->storeDetalle($id, $detalle);
-        // return response()->json(['Mensaje'=>'Registro exitoso'],200);
-        return response()->json($cierre,200);
+        return response()->json(['Mensaje'=>'Registro exitoso'],200);
+        // return response()->json($cierre,200);
     }
 
     function storeDetalle($id, $detalle) {
