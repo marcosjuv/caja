@@ -5,6 +5,8 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,7 +14,7 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
     public function run(): void
-    {
+    {       
         DB::table('users')->insert([
             'name' => 'Marcos',
             'lastname' => 'Urdaneta',
@@ -49,5 +51,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'tstark@gmail.com',
             'password' => 'v14278228'
         ]);
+        
+        User::factory()->count(196)->create();
     }
 }
